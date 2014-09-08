@@ -1,0 +1,19 @@
+import shutil
+import os
+
+
+def collate_static(modules, type, where):
+    for module in modules:
+        for item in os.walk("./{0}".format(module)):
+            for source in item[2]:
+                if source.endswith(type):
+                    print "{0}/{1}".format(item[0], source)
+                    shutil.copy("{0}/{1}".format(item[0], source),
+                                "{0}/{1}".format(where, source))
+
+if __name__ == "__main__":
+    modules = ['login', 'comments', 'webmail', 'home', 'voting']
+    #collate_static(modules, "html", "./templates")
+    collate_static(modules, "js", "./static")
+    collate_static(modules, "css", "./static")
+    collate_static(modules, "png", "./images")
