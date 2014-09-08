@@ -23,6 +23,8 @@ def login_handler():
             session = request.environ.get('beaker.session')
             session['user'] = user
             session['user_id'] = userid
+            if userid == "admin":
+                session['is_admin'] = True
             session.save()
             return redirect('/')
         ctx['message'] = 'Unknown username and/or password'
@@ -63,6 +65,26 @@ def admin_users():
         users = backend.get_users()
         ctx['users'] = users
         return ctx
+
+@route('/admin/users/new', methods=["get", "post"])
+@view('admin_users_new.html')
+def admin_users_new():
+    ctx = {}
+    if request.method == "POST":
+        backend_t = request.environ.get('kana.db_type')
+        if backend_t == "Production":
+            if backend is None:
+                backend = SQLBackend()
+            engine = request.environ.get('kana.db')
+            backend.set_engine(engine)
+        user = request.forms.get("user")
+        password = request.forms.get("password")
+        name = request.forms.get("name")
+        if backend.add_user(user, password, name):
+            ctx['message'] = "User added sucessfully"
+        else:
+            ctx['message'] = "User was not added."
+    return ctx
 
 if __name__ == "__main__":
     backend = DummyBackend()
