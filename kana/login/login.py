@@ -9,6 +9,7 @@ backend = None
 @view('login.html')
 def login_handler():
     ctx = {}
+    global backend
     if request.method == "POST":
         # this style could totally be cleaned up...
         backend_t = request.environ.get('kana.db_type')
