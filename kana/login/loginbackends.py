@@ -46,7 +46,11 @@ class SQLBackend(Backend):
         try:
             timestamp = generate_datetimestamp()
             hpass = self._hash(user, password, timestamp)
-            insert([users]).values(user, timestamp, hpass, username)
+            ins = insert([users]).values(user=user,
+                                         salt=timestamp,
+                                         password=hpass,
+                                         name=username)
+            self.engine.execute(ins)
             return True
         except:
             return False
@@ -68,10 +72,11 @@ class SQLBackend(Backend):
             timestamp = generate_datetimestamp()
             hpass = self._hash(user, password, timestamp)
 
-            update([users]).where(users.c.user == user).values(
-                  salt=timestamp,
-                  password=hpass,
-                  username=username)
+            upd = update([users]).where(users.c.user == user).values(
+                                                     salt=timestamp,
+                                                     password=hpass,
+                                                     username=username)
+            self.engine.execute(upd)
             return True
         except:
             return False
