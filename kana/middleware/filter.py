@@ -23,7 +23,7 @@ class FilterMiddleware(object):
 
         self.config.update(kwargs)
 
-        self.env_key = config.get('environment_key', 'ctfmiddleware.filter')
+        self.env_key = config.get('environment_key', 'kana.filter')
         self.seclevel = 0
 
     def __call__(self, environ, start_response):
@@ -36,7 +36,7 @@ class FilterMiddleware(object):
 
 
 def xssfilter(field):
-    seclevel = request.environ.get('ctfmiddleware.filter')
+    seclevel = request.environ.get('kana.filter')
 
     if seclevel == 0:
         return field

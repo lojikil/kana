@@ -1,6 +1,6 @@
 from bottle import request, redirect, route, jinja2_view, abort
 from loginbackends import DummyBackend, SQLBackend
-from kana.utils import view
+from kana.util import view
 
 backend = None
 
@@ -10,6 +10,7 @@ backend = None
 def login_handler():
     ctx = {}
     if request.method == "POST":
+        # this style could totally be cleaned up...
         backend_t = request.environ.get('kana.db_type')
         if backend_t == "Production":
             if backend is None:

@@ -1,2 +1,2 @@
-import login
-import model
+from . import login
+from . import model

@@ -73,16 +73,17 @@ class SQLBackend(Backend):
         res = conn.execute(query)
         data = res.fetchone()
         conn.close()
-        salt = data['salt'] + user
-        m = sha256()
-
-        m.update(salt + password)
-
-        for i in range(0, 4096):
-            hres = m.hexdigest()
-            m.update(hres)
 
         if data:
+            salt = data['salt'] + user
+            m = sha256()
+
+            m.update(salt + password)
+
+            for i in range(0, 4096):
+                hres = m.hexdigest()
+                m.update(hres)
+
             if m.hexdigest().upper() == data['password']:
                 return data['id']
             else:
