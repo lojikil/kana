@@ -108,7 +108,7 @@ class SQLBackend(Backend):
 
         if data:
             timestamp = data['salt']
-            hpass = self._hash(username, password, timestamp)
+            hpass = self._hash(user, password, timestamp)
 
             if hpass.lower() == data['password']:
                 return data['id']
