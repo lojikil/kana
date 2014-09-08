@@ -1,6 +1,6 @@
 # Overview
 
-Kana is a collection of utilities & libraries I use when working with (Bottle)[http://bottlepy.org]. It's not meant to be 
+Kana is a collection of utilities & libraries I use when working with [Bottle](http://bottlepy.org). It's not meant to be 
 complete, but _is_ meant to be relatively straight forward to use.
 
 ## Contents
