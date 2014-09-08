@@ -1,5 +1,5 @@
 import anydbm
-from sqlalchemy import select
+from sqlalchemy import select, update, insert
 from model import users
 from hashlib import sha256
 from kana.util.timestamp import generate_datetimestamp
@@ -10,11 +10,46 @@ class Backend(object):
     def check_credentials(self, user, password):
         raise NotImplementedError
 
+    def add_credentials(self, user, password, username):
+        raise NotImplementedError
+
+    def update_credentials(self, user, password, username):
+        raise NotImplementedError
 
 class SQLBackend(Backend):
 
     def set_engine(self, engine):
         self.engine = engine
+
+    def _hash(self, user, password, timestamp):
+        salt = timestamp + user
+        m = sha256()
+        m.update(salt + password)
+        for i in range(0, 4096):
+            hres = m.hexdigest()
+            m.update(hres)
+
+        return m.hexdigest()
+
+    def add_credentials(self, user, password, username):
+        """Add a user's information, including password, &c..
+
+        Args:
+            user (str): the user's username.
+            password (str): the user's
+            username (str): the user's display name (e.g. Stefan Edwards).
+
+        Return:
+            bool. True means success, False unsucess.
+
+        """
+        try:
+            timestamp = generate_datetimestamp()
+            hpass = self._hash(user, password, timestamp)
+            insert([users]).values(user, timestamp, hpass, username)
+            return True
+        except:
+            return False
 
     def update_credentials(self, user, password, username):
         """Update a user's information, including password, &c..
@@ -31,15 +66,7 @@ class SQLBackend(Backend):
 
         try:
             timestamp = generate_datetimestamp()
-            salt = timestamp + user
-            m = sha256()
-            m.update(salt + password)
-
-            for i in range(0, 4096):
-                hres = m.hexdigest()
-                m.update(hres)
-
-            hpass = m.hexdigest()
+            hpass = self._hash(user, password, timestamp)
 
             update([users]).where(users.c.user == user).values(
                   salt=timestamp,
@@ -75,16 +102,10 @@ class SQLBackend(Backend):
         conn.close()
 
         if data:
-            salt = data['salt'] + user
-            m = sha256()
+            timestamp = data['salt']
+            hpass = self._hash(username, password, timestamp)
 
-            m.update(salt + password)
-
-            for i in range(0, 4096):
-                hres = m.hexdigest()
-                m.update(hres)
-
-            if m.hexdigest().upper() == data['password']:
+            if hpass.lower() == data['password']:
                 return data['id']
             else:
                 return -1
