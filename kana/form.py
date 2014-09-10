@@ -98,7 +98,7 @@ class SelectFormField(FormField):
             return False
 
         for item in self.options:
-            if self.value == item[0]:
+            if self.value == str(item[0]):
                 return True
 
         self.has_errors = True
@@ -135,7 +135,7 @@ class TextFormField(FormField):
 
     def render(self):
         res = []
-        res.append("<textarea name=\"{0}\" ".format(self.anem))
+        res.append("<textarea name=\"{0}\" ".format(self.name))
 
         if self.autocomplete:
             res.append("autocomplete=\"false\" ")
