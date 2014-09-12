@@ -123,6 +123,9 @@ class SelectFormField(FormField):
 
         for item in self.options:
             res.append("<option ")
+            if self.value is not None:
+                if str(item[0]) == str(self.value):
+                    res.append(" selected=\"selected\" ")
             res.append("value=\"{0}\">".format(item[0]))
             res.append("{0}</option>\n".format(item[1]))
 
