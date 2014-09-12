@@ -149,10 +149,10 @@ class TextFormField(FormField):
         if self.css_id:
             res.append("id=\"{0}\" ".format(self.css_id))
 
-        if 'rows' in self.options:
+        if self.options is not None and 'rows' in self.options:
             res.append("rows=\"{0}\" ".format(self.options['rows']))
 
-        if 'cols' in self.options:
+        if self.options is not None and 'cols' in self.options:
             res.append("cols=\"{0}\" ".format(self.options['cols']))
 
         res.append(">\n")
