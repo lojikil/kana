@@ -1,5 +1,6 @@
 import cgi
 
+
 class FormField(object):
     __slots__ = ['name', 'autocomplete', 'type', 'value',
                  'css_class', 'description', 'error',
@@ -174,13 +175,14 @@ class TextFormField(FormField):
 
         return ''.join(res)
 
+
 class WebForm(object):
 
     def __init__(self, data=None):
         if data is not None:
             items = self.__class__.__dict__.iteritems()
             for item in items:
-                k,v = item
+                k, v = item
                 if isinstance(v, FormField):
                     v.value = data.get(v.name)
 
@@ -189,7 +191,7 @@ class WebForm(object):
         ret = True
         items = self.__class__.__dict__.iteritems()
         for item in items:
-            k,v = item
+            k, v = item
             if isinstance(v, FormField):
                 res = v.validate()
                 if not res:
