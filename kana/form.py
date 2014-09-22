@@ -144,27 +144,39 @@ class SelectFormField(FormField):
 
 class TextFormField(FormField):
 
-    def render(self):
+    def render(self, **kwargs):
         res = []
         res.append("<textarea name=\"{0}\" ".format(self.name))
 
-        if self.autocomplete:
+        if self.autocomplete or 'autocomplete' in kwargs:
             res.append("autocomplete=\"false\" ")
 
-        if self.disabled:
+        if self.disabled or 'disabled' in kwargs:
             res.append("disabled ")
 
         if self.css_class:
             res.append("class=\"{0}\" ".format(self.css_class))
 
+        if 'css_class' in kwargs:
+            res.append("class=\"{0}\" ".format(kwargs.get('css_class')))
+
         if self.css_id:
             res.append("id=\"{0}\" ".format(self.css_id))
+
+        if 'css_id' in kwargs:
+            res.append("id=\"{0}\" ".format(kwargs.get('css_id')))
 
         if self.options is not None and 'rows' in self.options:
             res.append("rows=\"{0}\" ".format(self.options['rows']))
 
+        if 'rows' in kwargs:
+            res.append("rows=\"{0}\" ".format(kwargs.get('rows')))
+
         if self.options is not None and 'cols' in self.options:
             res.append("cols=\"{0}\" ".format(self.options['cols']))
+
+        if 'cols' in kwargs:
+            res.append("cols=\"{0}\" ".format(kwargs.get('cols')))
 
         res.append(">\n")
 
