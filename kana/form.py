@@ -4,7 +4,7 @@ class FormField(object):
     __slots__ = ['name', 'autocomplete', 'type', 'value',
                  'css_class', 'description', 'error',
                  'has_errors', 'required', 'css_id',
-                 'options', 'size']
+                 'options', 'size', 'disabled']
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -15,6 +15,7 @@ class FormField(object):
         self.description = kwargs.get("description")
         self.required = kwargs.get("required", False)
         self.autocomplete = kwargs.get("autocomplete", False)
+        self.disabled = kwargs.get("disabled", False)
         self.error = None
         self.has_errors = False
         self.options = kwargs.get("options")
@@ -60,6 +61,9 @@ class FormField(object):
 
         if self.autocomplete:
             res.append("autocomplete=\"false\" ")
+
+        if self.disabled:
+            res.append("disabled ")
 
         if self.css_class:
             res.append("class=\"{0}\" ".format(self.css_class))
@@ -113,6 +117,9 @@ class SelectFormField(FormField):
         if self.autocomplete:
             res.append("autocomplete=\"false\" ")
 
+        if self.disabled:
+            res.append("disabled ")
+
         if self.css_class:
             res.append("class=\"{0}\" ".format(self.css_class))
 
@@ -142,6 +149,9 @@ class TextFormField(FormField):
 
         if self.autocomplete:
             res.append("autocomplete=\"false\" ")
+
+        if self.disabled:
+            res.append("disabled ")
 
         if self.css_class:
             res.append("class=\"{0}\" ".format(self.css_class))
