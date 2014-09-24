@@ -31,17 +31,19 @@ class FormField(object):
 
     def label(self):
         res = []
-        if self.description or self.has_errors:
-            lbl_txt = "<label for=\"{0}\">".format(self.name)
-            res.append(lbl_txt)
-            if self.description:
-                res.append(cgi.escape(self.description))
+        lbl_txt = "<label for=\"{0}\">".format(self.name)
+        res.append(lbl_txt)
+        if self.description:
+            res.append(cgi.escape(self.description))
+        else:
+            tmp = self.name.title()
+            res.append(' '.join(tmp.split('_')))
 
-            if self.has_errors:
-                res.append("<span class=\"error\">")
-                res.append("{0}</span>".format(self.error))
+        if self.has_errors:
+            res.append("<span class=\"error\">")
+            res.append("{0}</span>".format(self.error))
 
-            res.append("</label>\n")
+        res.append("</label>\n")
         return ''.join(res)
 
     def render(self):
