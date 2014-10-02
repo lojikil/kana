@@ -80,7 +80,7 @@ def admin_users_new():
         user = request.forms.get("user")
         password = request.forms.get("password")
         name = request.forms.get("name")
-        if backend.add_user(user, password, name):
+        if backend.add_credentials(user, password, name):
             ctx['message'] = "User added sucessfully"
         else:
             ctx['message'] = "User was not added."
