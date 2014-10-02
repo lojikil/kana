@@ -49,7 +49,7 @@ def account_handler():
     session = request.environ.get("beaker.session")
     if not updateable_p:
         abort(404)
-    data = backend.get_user_by_name(session.username)
+    data = backend.get_user_by_name(session['user'])
     ctx['user'] = data[0]
     ctx['name'] = data[3]
     return ctx
@@ -63,7 +63,7 @@ def account_password():
     if not updateable_p:
         abort(404)
     session = request.environ.get("beaker.session")
-    user = session.username
+    user = session['user']
     password = request.forms.get("password")
     new_password = request.forms.get("new_password")
     name = request.forms.get("name")
@@ -72,7 +72,7 @@ def account_password():
         backend.update_credentials(user, new_password, name)
         return redirect('/account')
     ctx['message'] = "Account update failed; please check the password and try again"
-    data = backend.get_user_by_name(session.username)
+    data = backend.get_user_by_name(session['user'])
     ctx['user'] = data[1]
     ctx['name'] = data[4]
     return ctx
@@ -82,7 +82,7 @@ def account_password():
 def admin_users():
     ctx = {}
     session = request.environ.get("beaker.session")
-    if session.username != "admin":
+    if session['user'] != "admin":
         return abort(404)
     users = backend.get_users()
     ctx['users'] = users
@@ -95,7 +95,7 @@ def admin_users_new():
     global backend
 
     session = request.environ.get("beaker.session")
-    if session.username != "admin":
+    if session['user'] != "admin":
         return abort(404)
 
     if request.method == "POST":
