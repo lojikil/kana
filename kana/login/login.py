@@ -43,24 +43,47 @@ def logout_handler():
 @route('/account')
 @view('account_main.html')
 def account_handler():
+    ctx = {}
     updateable_p = request.environ.get('kana.account_update', True)
+    global backend
+    session = request.environ.get("beaker.session")
     if not updateable_p:
         abort(404)
-    pass
+    data = backend.get_user_by_name(session.username)
+    ctx['user'] = data[0]
+    ctx['name'] = data[3]
+    return ctx
 
 @route('/account/password', method=["post"])
 @view('account_password.html')
 def account_password():
+    ctx = {}
+    global backend
     updateable_p = request.environ.get('kana.account_update', True)
     if not updateable_p:
         abort(404)
-    pass
-
+    session = request.environ.get("beaker.session")
+    user = session.username
+    password = request.forms.get("password")
+    new_password = request.forms.get("new_password")
+    name = request.forms.get("name")
+    userid = backend.check_credentials(user, password)
+    if userid > -1:
+        backend.update_credentials(user, new_password, name)
+        return redirect('/account')
+    ctx['message'] = "Account update failed; please check the password and try again"
+    data = backend.get_user_by_name(session.username)
+    ctx['user'] = data[1]
+    ctx['name'] = data[4]
+    return ctx
 
 @route('/admin/users', method=["get","post"])
 @view('admin_users.html')
 def admin_users():
     ctx = {}
+    session = request.environ.get("beaker.session")
+    if session.username != "admin":
+        return abort(404)
     users = backend.get_users()
     ctx['users'] = users
     return ctx
@@ -70,6 +93,11 @@ def admin_users():
 def admin_users_new():
     ctx = {}
     global backend
+
+    session = request.environ.get("beaker.session")
+    if session.username != "admin":
+        return abort(404)
+
     if request.method == "POST":
         backend_t = request.environ.get('kana.db_type')
         if backend_t == "Production":

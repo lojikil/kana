@@ -41,6 +41,18 @@ class SQLBackend(Backend):
                 data.close()
         return res
 
+    def get_user_by_name(self, user):
+        qry = select([users]).where(users.c.user == user)
+
+        res = None
+
+        with self.engine.begin() as connection:
+            data = connection.execute(qry)
+
+            if data is not None:
+                res = data.fetchone()
+                data.close()
+        return res
 
     def add_credentials(self, user, password, username):
         """Add a user's information, including password, &c..
@@ -57,7 +69,7 @@ class SQLBackend(Backend):
         try:
             timestamp = generate_datetimestamp()
             hpass = self._hash(user, password, timestamp)
-            ins = insert([users]).values(user=user,
+            ins = insert(users).values(user=user,
                                          salt=timestamp,
                                          password=hpass,
                                          name=username)
