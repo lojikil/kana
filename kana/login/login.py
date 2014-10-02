@@ -57,18 +57,15 @@ def account_password():
     pass
 
 
-@route('/admin/users', methods=["get","post"])
+@route('/admin/users', method=["get","post"])
 @view('admin_users.html')
 def admin_users():
     ctx = {}
-    if request.method == "POST":
-        pass
-    else:
-        users = backend.get_users()
-        ctx['users'] = users
-        return ctx
+    users = backend.get_users()
+    ctx['users'] = users
+    return ctx
 
-@route('/admin/users/new', methods=["get", "post"])
+@route('/admin/users/new', method=["get", "post"])
 @view('admin_users_new.html')
 def admin_users_new():
     ctx = {}
