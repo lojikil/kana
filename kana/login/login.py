@@ -69,6 +69,7 @@ def admin_users():
 @view('admin_users_new.html')
 def admin_users_new():
     ctx = {}
+    global backend
     if request.method == "POST":
         backend_t = request.environ.get('kana.db_type')
         if backend_t == "Production":
