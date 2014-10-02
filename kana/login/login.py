@@ -50,8 +50,8 @@ def account_handler():
     if not updateable_p:
         abort(404)
     data = backend.get_user_by_name(session['user'])
-    ctx['user'] = data[0]
-    ctx['name'] = data[3]
+    ctx['user'] = data[1]
+    ctx['name'] = data[4]
     return ctx
 
 @route('/account/password', method=["post"])
