@@ -95,10 +95,10 @@ class SQLBackend(Backend):
             timestamp = generate_datetimestamp()
             hpass = self._hash(user, password, timestamp)
 
-            upd = update([users]).where(users.c.user == user).values(
+            upd = update(users).where(users.c.user == user).values(
                                                      salt=timestamp,
                                                      password=hpass,
-                                                     username=username)
+                                                     name=username)
             self.engine.execute(upd)
             return True
         except:
