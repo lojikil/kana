@@ -31,6 +31,17 @@ class SQLBackend(Backend):
 
         return m.hexdigest()
 
+    def get_users(self):
+        qry = select([users])
+        with self.engine.begin() as connection:
+            data = connection.execute(qry)
+
+            if data is not None:
+                res = data.fetchall()
+                data.close()
+        return res
+
+
     def add_credentials(self, user, password, username):
         """Add a user's information, including password, &c..
 
