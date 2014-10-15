@@ -190,21 +190,51 @@ class TextFormField(FormField):
         return ''.join(res)
 
 
+class FormMeta(type):
+
+    #__slots__ = ['fields']
+
+    def __init__(self, name, bases, attrs):
+        #self.fields = {}
+        super(FormMeta, self).__init__(name, bases, attrs)
+
+    def __getitem__(self, name):
+        return self.fields[name]
+
+    def __new__(cls, name, parents, dct):
+
+        fields = {}
+
+        for item in dct:
+            if not item.startswith("__"):
+                fields[item] = dct[item]
+
+        for item in fields:
+            del(dct[item])
+
+        dct['fields'] = fields
+
+        return super(FormMeta, cls).__new__(cls, name, parents, dct)
+
+
 class WebForm(object):
+
+    __metaclass__ = FormMeta
 
     def __init__(self, data=None):
         if data is not None:
-            items = self.__class__.__dict__.iteritems()
-            for item in items:
+            for item in self.fields.iteritems():
                 k, v = item
                 if isinstance(v, FormField):
                     v.value = data.get(v.name)
 
+    def __getitem__(self, name):
+        return self.fields[name]
+
     def validate(self):
         res = True
         ret = True
-        items = self.__class__.__dict__.iteritems()
-        for item in items:
+        for item in self.fields.iteritems():
             k, v = item
             if isinstance(v, FormField):
                 res = v.validate()
