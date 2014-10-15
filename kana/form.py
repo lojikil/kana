@@ -1,4 +1,5 @@
 import cgi
+import copy
 
 
 class FormField(object):
@@ -80,6 +81,11 @@ class FormField(object):
 
     def __str__(self):
         return self.label() + self.render()
+
+    def __deepcopy__(self, memo):
+        result = copy.copy(self)
+        memo[id(self)] = result
+        return result
 
 
 class IntegerFormField(FormField):
@@ -195,7 +201,6 @@ class FormMeta(type):
     #__slots__ = ['fields']
 
     def __init__(self, name, bases, attrs):
-        #self.fields = {}
         super(FormMeta, self).__init__(name, bases, attrs)
 
     def __getitem__(self, name):
@@ -206,13 +211,14 @@ class FormMeta(type):
         fields = {}
 
         for item in dct:
-            if not item.startswith("__"):
-                fields[item] = dct[item]
+            val = dct[item]
+            if isinstance(val, FormField):
+                fields[item] = val
 
         for item in fields:
             del(dct[item])
 
-        dct['fields'] = fields
+        dct['base_fields'] = fields
 
         return super(FormMeta, cls).__new__(cls, name, parents, dct)
 
@@ -222,6 +228,9 @@ class WebForm(object):
     __metaclass__ = FormMeta
 
     def __init__(self, data=None):
+        self.fields = {}
+        for k,v in self.base_fields.iteritems():
+            self.fields[k] = copy.deepcopy(v)
         if data is not None:
             for item in self.fields.iteritems():
                 k, v = item
@@ -230,6 +239,9 @@ class WebForm(object):
 
     def __getitem__(self, name):
         return self.fields[name]
+
+    def keys(self):
+        return self.fields.keys()
 
     def validate(self):
         res = True
