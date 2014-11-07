@@ -47,7 +47,7 @@ class FormField(object):
         res.append("</label>\n")
         return ''.join(res)
 
-    def render(self):
+    def render(self, **kwargs):
         res = []
         if not self.name:
             raise Exception("Field must have name attribute")
@@ -118,7 +118,7 @@ class SelectFormField(FormField):
         self.error = "Value not within supported range"
         return False
 
-    def render(self):
+    def render(self, **kwargs):
         res = []
 
         res.append("<select name=\"{0}\" ".format(self.name))
