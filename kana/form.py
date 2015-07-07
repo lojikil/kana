@@ -6,7 +6,8 @@ class FormField(object):
     __slots__ = ['name', 'autocomplete', 'type', 'value',
                  'css_class', 'description', 'error',
                  'has_errors', 'required', 'css_id',
-                 'options', 'size', 'disabled']
+                 'options', 'size', 'disabled', 'default',
+                 'alt']
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -18,6 +19,8 @@ class FormField(object):
         self.required = kwargs.get("required", False)
         self.autocomplete = kwargs.get("autocomplete", False)
         self.disabled = kwargs.get("disabled", False)
+        self.default = kwargs.get("default")
+        self.alt = kwargs.get("alt")
         self.error = None
         self.has_errors = False
         self.options = kwargs.get("options")
@@ -65,6 +68,12 @@ class FormField(object):
 
         if self.autocomplete:
             res.append("autocomplete=\"false\" ")
+
+        if self.alt:
+            res.append("alt=\"{0}\" ".format(cgi.escape(self.alt)))
+
+        if self.default:
+            res.append("defaultValue=\"{0}\" ".format(cgi.escape(self.default)))
 
         if self.disabled:
             res.append("disabled ")
